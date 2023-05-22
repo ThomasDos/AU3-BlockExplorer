@@ -22,8 +22,8 @@ export default function Navigation() {
           </Link>
         </li>
         <li className='mr-6'>
-          <Link className='text-blue-500 hover:text-blue-800' href='/address'>
-            Address
+          <Link className='text-blue-500 hover:text-blue-800' href='/account'>
+            Account
           </Link>
         </li>
         <li className='mr-6'>

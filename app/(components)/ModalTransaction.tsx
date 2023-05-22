@@ -14,7 +14,7 @@ export default function ModalTransaction({ selectTransaction, handleClose }: Mod
         {selectTransaction ? (
           <>
             <h2>{selectTransaction.hash}</h2>
-            <Link href={`/transaction/${selectTransaction.hash}`}>View the full transaction</Link>
+            <Link href={`/transaction?hash=${selectTransaction.hash}`}>View the full transaction</Link>
           </>
         ) : (
           <Dots dotscolor='blue' />
