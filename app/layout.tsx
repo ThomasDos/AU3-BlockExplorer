@@ -1,5 +1,6 @@
 import ReactQueryProvider from '@/utils/rq-provider'
 import { Inter } from 'next/font/google'
+import Footer from './(layout)/footer'
 import Navigation from './(layout)/navigation'
 import './globals.css'
 
@@ -16,7 +17,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <ReactQueryProvider>
           <Navigation />
-          {children}
+          <div className='h-auto'>{children}</div>
+          <Footer />
         </ReactQueryProvider>
       </body>
     </html>

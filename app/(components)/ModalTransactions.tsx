@@ -31,7 +31,11 @@ export default function ModalTransactions({ open, onClose, transactions }: Modal
         <div className='grid grid-cols-3'>
           {transactions?.map((transaction: TransactionResponse) => {
             return (
-              <div key={transaction.hash} className='w-fit text-sm' onClick={() => handleClickTransaction(transaction)}>
+              <div
+                key={transaction.hash}
+                className='w-fit text-sm cursor-pointer hover:text-gray-600 text-gray-300'
+                onClick={() => handleClickTransaction(transaction)}
+              >
                 {transaction.hash}
               </div>
             )
