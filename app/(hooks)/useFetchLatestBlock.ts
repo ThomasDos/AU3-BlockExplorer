@@ -1,13 +1,8 @@
 import { alchemy } from '@/app/(utils)/alchemy-client'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 
-export default function useFetchLatestBlock(blockNumber?: number | string) {
-  return useQuery(
-    ['alchemy-latestblock', blockNumber],
-    () => alchemy.core.getBlockWithTransactions(blockNumber as string | number),
-    {
-      refetchInterval: 1000 * 60 * 10,
-      enabled: !!blockNumber
-    }
+export default function useFetchLatestBlock() {
+  return useMutation(['alchemy-fetch-block'], (blockNumber?: number | string) =>
+    alchemy.core.getBlockWithTransactions(blockNumber as number | string)
   )
 }
