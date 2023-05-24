@@ -14,7 +14,6 @@ export default function AccountPage() {
   const params = useSearchParams()
   const accountAddress = params.get('address') as HexString
   const [transactionSelected, setTransactionSelected] = useState<null | TransactionResult>(null)
-  console.log('🚀 ~ file: page.tsx:17 ~ AccountPage ~ transactionSelected:', transactionSelected)
 
   const {
     mutate: accountBalanceMutate,
