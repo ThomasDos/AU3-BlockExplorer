@@ -1,12 +1,37 @@
 'use client'
 
-import { Utils } from 'alchemy-sdk'
+import { BlockWithTransactions, Utils } from 'alchemy-sdk'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import BlockCardBlockChain from './(components)/BlockCardBlockChain'
+import Dots from './(components)/ui/Dots'
+import useFetchBlock from './(hooks)/useFetchBlock'
 
 export default function Home() {
   const [explorerInput, setExplorerInput] = useState('')
+  const [blocks, setBlocks] = useState<BlockWithTransactions[]>([])
+  console.log('🚀 ~ file: page.tsx:11 ~ Home ~ blocks:', blocks)
   const router = useRouter()
+  const { isLoading: blockIsLoading, mutateAsync: blockMutate } = useFetchBlock()
+
+  useEffect(() => {
+    if (blocks.length || blockIsLoading) return
+    const fetchBlocks = async () => {
+      const latestBlock = await blockMutate('latest')
+      const blockNumber = latestBlock.number
+      if (!blockNumber) return
+
+      const blocks: BlockWithTransactions[] = []
+      for (let i = blockNumber - 4; i < blockNumber; i++) {
+        const block = await blockMutate(i)
+        blocks.push(block)
+      }
+      blocks.push(latestBlock)
+      setBlocks(blocks)
+    }
+    fetchBlocks()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -35,6 +60,16 @@ export default function Home() {
           className='w-6/12 border p-2'
         />
       </form>
+      <div className='mt-10'>
+        <div className='text-lg font-bold'>Blockchain Ethereum</div>
+        <div className='flex my-10'>
+          {blockIsLoading ? (
+            <Dots dotscolor='blue' />
+          ) : (
+            !!blocks.length && blocks.map((block) => <BlockCardBlockChain key={block.hash} block={block} />)
+          )}
+        </div>
+      </div>
     </main>
   )
 }

@@ -21,19 +21,15 @@ export default function ModalTransactions({ open, onClose, transactions }: Modal
     setSelectTransaction(transaction)
   }
   return (
-    <Modal
-      open={open}
-      className='flex flex-col justify-center items-center w-full bg-white py-10 px-2'
-      onClose={onClose}
-    >
-      <>
+    <Modal open={open} onClose={onClose} className='bg-white'>
+      <div className='flex flex-col justify-center items-center w-full py-10 px-2 text-black'>
         <span className='text-xl mb-4'>Transactions list</span>
-        <div className='grid grid-cols-3'>
+        <div className='grid grid-cols-2'>
           {transactions?.map((transaction) => {
             return (
               <div
                 key={transaction.hash}
-                className='w-fit text-sm cursor-pointer hover:text-gray-600 text-gray-300'
+                className='w-fit text-sm cursor-pointer hover:text-gray-600'
                 onClick={() => handleClickTransaction(transaction)}
               >
                 {transaction.hash}
@@ -44,7 +40,7 @@ export default function ModalTransactions({ open, onClose, transactions }: Modal
         {selectTransaction && (
           <ModalTransaction selectTransaction={selectTransaction} handleClose={handleModalTransactionClose} />
         )}
-      </>
+      </div>
     </Modal>
   )
 }

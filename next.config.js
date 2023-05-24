@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    optimizeCss: true
+  compiler: {
+    styledComponents: { ssr: true, displayName: true }
   }
 }
 
