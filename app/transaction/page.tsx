@@ -5,7 +5,6 @@ import dayjs from 'dayjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
 import AccountRowLink from '../(components)/AccountRowLink'
-import Dots from '../(components)/ui/Dots'
 import useFetchBlock from '../(hooks)/useFetchBlock'
 import convertWeiToEth from '../(utils)/convertWeiToEth'
 import { alchemy } from '../(utils)/web3/alchemy-client'
@@ -73,7 +72,7 @@ export default function TransactionPage() {
       >
         Reset input
       </button>
-      {transaction && !transactionIsLoading ? (
+      {transaction && !transactionIsLoading && (
         <>
           <div>Transaction hash : {transaction.hash} </div>
           {blockData?.timestamp && (
@@ -90,11 +89,8 @@ export default function TransactionPage() {
           <div className='break-words'>Transaction nonce : {transaction.nonce}</div>
           <div className='break-words'>Transaction value : {convertWeiToEth(transaction.value)} eth</div>
         </>
-      ) : (
-        <div className='my-10'>
-          <Dots dotscolor='blue' />
-        </div>
       )}
+      {transactionIsLoading && <Skeleton variant='rounded' width={600} height={200} />}
 
       {transactionError && <div className='text-red-600 py-4'>Transaction error : {transactionError} </div>}
     </div>
