@@ -1,12 +1,14 @@
 'use client'
+import { Skeleton } from '@mui/material'
 import { TransactionResponse, Utils } from 'alchemy-sdk'
 import dayjs from 'dayjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
 import AccountRowLink from '../(components)/AccountRowLink'
 import Dots from '../(components)/ui/Dots'
-import { alchemy } from '../(utils)/alchemy-client'
+import useFetchBlock from '../(hooks)/useFetchBlock'
 import convertWeiToEth from '../(utils)/convertWeiToEth'
+import { alchemy } from '../(utils)/web3/alchemy-client'
 
 export default function TransactionPage() {
   const [transactionInput, setTransactionInput] = useState('')
@@ -17,6 +19,13 @@ export default function TransactionPage() {
   const [transaction, setTransaction] = useState<null | TransactionResponse | undefined>(null)
   const [transactionError, setTransactionError] = useState<null | string>(null)
   const [transactionIsLoading, setTransactionIsLoading] = useState(false)
+
+  const { data: blockData, mutate: blockMutate, isLoading: blockIsLoading } = useFetchBlock()
+  useEffect(() => {
+    if (transaction) {
+      blockMutate(transaction.blockNumber)
+    }
+  }, [transaction, blockMutate])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -67,13 +76,14 @@ export default function TransactionPage() {
       {transaction && !transactionIsLoading ? (
         <>
           <div>Transaction hash : {transaction.hash} </div>
-          {transaction.timeStamp && (
+          {blockData?.timestamp && (
             <h3>
               <strong>Date : </strong>
 
-              {dayjs(transaction.timeStamp * 1000).toString()}
+              {dayjs(blockData.timestamp * 1000).toString()}
             </h3>
           )}
+          {blockIsLoading && <Skeleton variant='text' sx={{ fontSize: '1rem', width: '20rem' }} />}
           <div className='break-words'>Transaction confirmations : {transaction.confirmations}</div>
           <AccountRowLink text='From :' address={transaction.from} />
           <AccountRowLink text='To :' address={transaction.to as string} />

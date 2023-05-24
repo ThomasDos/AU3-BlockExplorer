@@ -1,4 +1,4 @@
-import { alchemy } from '@/app/(utils)/alchemy-client'
+import { alchemy } from '@/app/(utils)/web3/alchemy-client'
 import { useMutation } from '@tanstack/react-query'
 import { HexString } from 'ethers/lib.commonjs/utils/data'
 

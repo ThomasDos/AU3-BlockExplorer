@@ -1,7 +1,7 @@
 'use client'
+import useFetchBlock from '@/app/(hooks)/useFetchBlock'
 import ModalTransactions from '@/components//ModalTransactions'
 import BlockCard from '@/components/BlockCard'
-import useFetchLatestBlock from '@/hooks/useFetchLatestBlock'
 import { BlockWithTransactions } from 'alchemy-sdk'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -12,8 +12,8 @@ export default function BlockPage() {
   const blockNumber = Number(params.get('number')) as number
 
   const [selectTransactions, setSelectTransactions] = useState<null | BlockWithTransactions>(null)
-  const { data: latestBlock, isLoading: latestBlockIsLoading, mutate: latestBlockMutate } = useFetchLatestBlock()
-  const { data: randomBlock, isLoading: randomBlockIsLoading, mutate: randomBlockMutate } = useFetchLatestBlock()
+  const { data: latestBlock, isLoading: latestBlockIsLoading, mutate: latestBlockMutate } = useFetchBlock()
+  const { data: randomBlock, isLoading: randomBlockIsLoading, mutate: randomBlockMutate } = useFetchBlock()
   const randomNumberInTotalBlocks = () => {
     if (!latestBlock) return
     randomBlockMutate(Math.ceil(Math.random() * latestBlock.number))

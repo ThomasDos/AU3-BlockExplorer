@@ -1,19 +1,20 @@
 'use client'
-import { TransactionResponse, Utils } from 'alchemy-sdk'
+import { Utils } from 'alchemy-sdk'
 import { HexString } from 'ethers/lib.commonjs/utils/data'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import ModalTransaction from '../(components)/ModalTransaction'
 import Dots from '../(components)/ui/Dots'
 import useFetchAccountBalance from '../(hooks)/useFetchAccountBalance'
-import useFetchAccountTransactions from '../(hooks)/useFetchAccountTransactions'
+import useFetchAccountTransactions, { TransactionResult } from '../(hooks)/useFetchAccountTransactions'
 
 export default function AccountPage() {
   const [addressInput, setAddressInput] = useState('')
   const router = useRouter()
   const params = useSearchParams()
   const accountAddress = params.get('address') as HexString
-  const [transactionSelected, setTransactionSelected] = useState<null | TransactionResponse>(null)
+  const [transactionSelected, setTransactionSelected] = useState<null | TransactionResult>(null)
+  console.log('🚀 ~ file: page.tsx:17 ~ AccountPage ~ transactionSelected:', transactionSelected)
 
   const {
     mutate: accountBalanceMutate,
@@ -33,7 +34,7 @@ export default function AccountPage() {
     transactionsMutate(accountAddress)
   }, [accountAddress, accountBalanceMutate, transactionsMutate])
 
-  const handleClickTransaction = (transaction: TransactionResponse) => {
+  const handleClickTransaction = (transaction: TransactionResult) => {
     setTransactionSelected(transaction)
   }
 
@@ -75,7 +76,7 @@ export default function AccountPage() {
               <div>
                 <h3 className='my-4 font-bold'>Account Transactions : </h3>
                 <ul>
-                  {transactions?.map((transaction: TransactionResponse) => (
+                  {transactions?.map((transaction) => (
                     <li
                       key={transaction.hash}
                       onClick={() => handleClickTransaction(transaction)}

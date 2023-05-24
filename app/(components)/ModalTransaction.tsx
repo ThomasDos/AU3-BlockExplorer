@@ -1,8 +1,11 @@
-import { Link, Modal } from '@mui/material'
+import { Link, Modal, Skeleton } from '@mui/material'
 import { TransactionResponse } from 'alchemy-sdk'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { styled } from 'styled-components'
+import { TransactionResult } from '../(hooks)/useFetchAccountTransactions'
+import useFetchBlock from '../(hooks)/useFetchBlock'
 import convertWeiToEth from '../(utils)/convertWeiToEth'
 import AccountRowLink from './AccountRowLink'
 import Dots from './ui/Dots'
@@ -21,7 +24,7 @@ const StyledContainer = styled.div`
 `
 
 interface ModalTransactionProps {
-  selectTransaction: null | TransactionResponse
+  selectTransaction: null | TransactionResult | TransactionResponse
   handleClose: () => void
 }
 
@@ -31,21 +34,29 @@ export default function ModalTransaction({ selectTransaction, handleClose }: Mod
     handleClose()
     router.push(`/account?address=${accountAddress}`)
   }
+  const { data: blockData, mutate: blockMutate, isLoading: blockIsLoading } = useFetchBlock()
+  useEffect(() => {
+    if (selectTransaction?.blockNumber) {
+      blockMutate(Number(selectTransaction.blockNumber))
+    }
+  }, [selectTransaction, blockMutate])
 
   if (!selectTransaction) return null
+
   return (
     <Modal open={!!selectTransaction} onClose={handleClose} className='flex justify-center items-center'>
       <StyledContainer className='bg-white p-10'>
         {selectTransaction ? (
           <>
             <h2>Hash : {selectTransaction.hash}</h2>
-            {selectTransaction.timeStamp && (
+            {blockData && (
               <h3>
                 <strong>Date : </strong>
 
-                {dayjs(selectTransaction.timeStamp * 1000).toString()}
+                {dayjs(blockData.timestamp * 1000).toString()}
               </h3>
             )}
+            {blockIsLoading && <Skeleton variant='text' sx={{ fontSize: '1rem', width: '20rem' }} />}
             <AccountRowLink
               text='From :'
               address={selectTransaction.from}

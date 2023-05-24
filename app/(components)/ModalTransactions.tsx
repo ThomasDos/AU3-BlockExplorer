@@ -29,7 +29,7 @@ export default function ModalTransactions({ open, onClose, transactions }: Modal
       <>
         <span className='text-xl mb-4'>Transactions list</span>
         <div className='grid grid-cols-3'>
-          {transactions?.map((transaction: TransactionResponse) => {
+          {transactions?.map((transaction) => {
             return (
               <div
                 key={transaction.hash}
