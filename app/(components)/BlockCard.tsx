@@ -2,6 +2,7 @@ import { Collapse } from '@mui/material'
 import { BigNumberish, BlockWithTransactions, TransactionResponse, Utils } from 'alchemy-sdk'
 import dayjs from 'dayjs'
 import { useState } from 'react'
+import useFetchEthereumPrice from '../(hooks)/useFetchEthereumPrice'
 import ModalTransaction from './ModalTransaction'
 import Dots from './ui/Dots'
 
@@ -13,6 +14,12 @@ interface BlockCardProps {
 export default function BlockCard({ block, blockIsLoading }: BlockCardProps) {
   const [showTransactions, setShowTransactions] = useState(false)
   const [selectTransaction, setSelectTransaction] = useState<null | TransactionResponse>(null)
+  const { data: ethereumPrice, isLoading: ethereumPriceIsLoading } = useFetchEthereumPrice()
+
+  if (!block) return null
+
+  const valueEth = block.baseFeePerGas?._hex && Utils.formatEther(block.baseFeePerGas?._hex as BigNumberish)
+
   return (
     <>
       <div className='my-10 block p-4 bg-white border border-gray-200 rounded-lg shadow'>
@@ -27,11 +34,12 @@ export default function BlockCard({ block, blockIsLoading }: BlockCardProps) {
               {dayjs(block.timestamp * 1000).toLocaleString()}
             </p>
 
-            <p className='font-normal text-gray-700  cursor-pointer hover:text-blue-700 hover:underline'>
-              Transactions : {block.transactions.length}
-            </p>
+            <p className='font-normal text-gray-700'>Transactions : {block.transactions.length}</p>
             {block.baseFeePerGas?._hex && (
-              <p>Base fee : {Utils.formatEther(block.baseFeePerGas?._hex as BigNumberish)} eth</p>
+              <p>
+                Base fee : {valueEth} eth{' '}
+                {!ethereumPriceIsLoading && ethereumPrice && `($${(ethereumPrice * Number(valueEth)).toFixed(6)})`}
+              </p>
             )}
             <p
               onClick={() => setShowTransactions(!showTransactions)}

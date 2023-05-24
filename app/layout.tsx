@@ -16,9 +16,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en'>
       <body className={inter.className}>
         <ReactQueryProvider>
-          <Navigation />
-          <div className='h-auto'>{children}</div>
-          <Footer />
+          <div className='h-auto'>
+            <Navigation />
+            {children}
+            <Footer />
+          </div>
         </ReactQueryProvider>
       </body>
     </html>

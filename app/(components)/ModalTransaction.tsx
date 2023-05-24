@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { styled } from 'styled-components'
 import { TransactionResult } from '../(hooks)/useFetchAccountTransactions'
 import useFetchBlock from '../(hooks)/useFetchBlock'
+import useFetchEthereumPrice from '../(hooks)/useFetchEthereumPrice'
 import convertWeiToEth from '../(utils)/convertWeiToEth'
 import AccountRowLink from './AccountRowLink'
 import Dots from './ui/Dots'
@@ -35,6 +36,8 @@ export default function ModalTransaction({ selectTransaction, handleClose }: Mod
     router.push(`/account?address=${accountAddress}`)
   }
   const { data: blockData, mutate: blockMutate, isLoading: blockIsLoading } = useFetchBlock()
+  const { data: ethereumPrice, isLoading: ethereumPriceIsLoading } = useFetchEthereumPrice()
+
   useEffect(() => {
     if (selectTransaction?.blockNumber) {
       blockMutate(Number(selectTransaction.blockNumber))
@@ -42,6 +45,8 @@ export default function ModalTransaction({ selectTransaction, handleClose }: Mod
   }, [selectTransaction, blockMutate])
 
   if (!selectTransaction) return null
+
+  const valueEth = convertWeiToEth(selectTransaction.value)
 
   return (
     <Modal open={!!selectTransaction} onClose={handleClose} className='flex justify-center items-center'>
@@ -69,7 +74,7 @@ export default function ModalTransaction({ selectTransaction, handleClose }: Mod
             />
             <h3>
               <strong>Value : </strong>
-              {convertWeiToEth(selectTransaction.value)} eth
+              {valueEth} eth {!ethereumPriceIsLoading && ethereumPrice && `($${(ethereumPrice * valueEth).toFixed(2)})`}
             </h3>
             <Link href={`/transaction?hash=${selectTransaction.hash}`}>View the full transaction</Link>
           </>

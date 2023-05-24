@@ -17,9 +17,7 @@ export default function BlockCardBlockChain({ block }: BlockCardProps) {
         {dayjs(block.timestamp * 1000).toLocaleString()}
       </p>
 
-      <p className='font-normal text-gray-700  cursor-pointer hover:text-blue-700 hover:underline'>
-        Transactions : {block.transactions.length}
-      </p>
+      <p className='font-normal text-gray-700'>Transactions : {block.transactions.length}</p>
 
       <p
         className='text-blue-500 hover:text-blue-800 hover:font-bold cursor-pointer'

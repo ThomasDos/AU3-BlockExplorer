@@ -7,6 +7,7 @@ import ModalTransaction from '../(components)/ModalTransaction'
 import Dots from '../(components)/ui/Dots'
 import useFetchAccountBalance from '../(hooks)/useFetchAccountBalance'
 import useFetchAccountTransactions, { TransactionResult } from '../(hooks)/useFetchAccountTransactions'
+import useFetchEthereumPrice from '../(hooks)/useFetchEthereumPrice'
 
 export default function AccountPage() {
   const [addressInput, setAddressInput] = useState('')
@@ -14,6 +15,7 @@ export default function AccountPage() {
   const params = useSearchParams()
   const accountAddress = params.get('address') as HexString
   const [transactionSelected, setTransactionSelected] = useState<null | TransactionResult>(null)
+  const { data: ethereumPrice, isLoading: ethereumPriceIsLoading } = useFetchEthereumPrice()
 
   const {
     mutate: accountBalanceMutate,
@@ -48,6 +50,8 @@ export default function AccountPage() {
     }
   }
 
+  const valueEth = accountBalanceData && Number(Utils.formatEther(accountBalanceData._hex))
+
   return (
     <>
       <div className='flex flex-col items-center'>
@@ -68,7 +72,13 @@ export default function AccountPage() {
           <>
             <div>Account address : {accountAddress}</div>
             {accountBalanceData && (
-              <div>Account Balance : {Number(Utils.formatEther(accountBalanceData._hex)).toFixed(5)} eth</div>
+              <div>
+                Account Balance : {valueEth?.toFixed(5)} eth{' '}
+                {!ethereumPriceIsLoading &&
+                  ethereumPrice &&
+                  !!valueEth &&
+                  `($${(ethereumPrice * valueEth).toFixed(2)})`}
+              </div>
             )}
 
             {transactions && typeof transactions !== 'string' && !transactionsError && (

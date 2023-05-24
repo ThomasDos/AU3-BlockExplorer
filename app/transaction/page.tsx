@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
 import AccountRowLink from '../(components)/AccountRowLink'
 import useFetchBlock from '../(hooks)/useFetchBlock'
+import useFetchEthereumPrice from '../(hooks)/useFetchEthereumPrice'
 import convertWeiToEth from '../(utils)/convertWeiToEth'
 import { alchemy } from '../(utils)/web3/alchemy-client'
 
@@ -14,6 +15,7 @@ export default function TransactionPage() {
   const router = useRouter()
   const params = useSearchParams()
   const transactionHash = params.get('hash')
+  const { data: ethereumPrice, isLoading: ethereumPriceIsLoading } = useFetchEthereumPrice()
 
   const [transaction, setTransaction] = useState<null | TransactionResponse | undefined>(null)
   const [transactionError, setTransactionError] = useState<null | string>(null)
@@ -55,6 +57,8 @@ export default function TransactionPage() {
     fetchTransaction(transactionHash)
   }, [transactionHash])
 
+  const valueEth = transaction?.value && convertWeiToEth(transaction.value)
+
   return (
     <div className='text-center p-10 flex flex-col items-center'>
       <form onSubmit={handleSubmit}>
@@ -66,15 +70,15 @@ export default function TransactionPage() {
           className='bg-gray-100 border-rounded border-2 border-gray-300 p-2'
         />
       </form>
-      <button
-        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-2'
-        onClick={handleReset}
-      >
+      <button className='bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded my-5' onClick={handleReset}>
         Reset input
       </button>
       {transaction && !transactionIsLoading && (
         <>
-          <div>Transaction hash : {transaction.hash} </div>
+          <div>
+            <b>Transaction hash : </b>
+            {transaction.hash}{' '}
+          </div>
           {blockData?.timestamp && (
             <h3>
               <strong>Date : </strong>
@@ -83,11 +87,22 @@ export default function TransactionPage() {
             </h3>
           )}
           {blockIsLoading && <Skeleton variant='text' sx={{ fontSize: '1rem', width: '20rem' }} />}
-          <div className='break-words'>Transaction confirmations : {transaction.confirmations}</div>
+          <div className='font-bold'>Transaction confirmations : {transaction.confirmations}</div>
+          <div
+            className='text-blue-600 hover:text-blue-900 hover:scale-105 cursor-pointer'
+            onClick={() => router.push(`/block?number=${transaction.blockNumber}`)}
+          >
+            <b>Transaction block number : </b>
+            {transaction.blockNumber}
+          </div>
           <AccountRowLink text='From :' address={transaction.from} />
           <AccountRowLink text='To :' address={transaction.to as string} />
-          <div className='break-words'>Transaction nonce : {transaction.nonce}</div>
-          <div className='break-words'>Transaction value : {convertWeiToEth(transaction.value)} eth</div>
+          <div>Transaction nonce : {transaction.nonce}</div>
+          <div>
+            <b>Transaction value : </b>
+            {valueEth} eth{' '}
+            {!ethereumPriceIsLoading && ethereumPrice && !!valueEth && `($${(ethereumPrice * valueEth).toFixed(2)})`}
+          </div>
         </>
       )}
       {transactionIsLoading && <Skeleton variant='rounded' width={600} height={200} />}

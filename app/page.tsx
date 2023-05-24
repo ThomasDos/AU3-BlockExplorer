@@ -1,18 +1,21 @@
 'use client'
 
+import { Skeleton } from '@mui/material'
 import { BlockWithTransactions, Utils } from 'alchemy-sdk'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import BlockCardBlockChain from './(components)/BlockCardBlockChain'
 import Dots from './(components)/ui/Dots'
 import useFetchBlock from './(hooks)/useFetchBlock'
+import useFetchEthereumPrice from './(hooks)/useFetchEthereumPrice'
 
 export default function Home() {
   const [explorerInput, setExplorerInput] = useState('')
   const [blocks, setBlocks] = useState<BlockWithTransactions[]>([])
-  console.log('🚀 ~ file: page.tsx:11 ~ Home ~ blocks:', blocks)
   const router = useRouter()
   const { isLoading: blockIsLoading, mutateAsync: blockMutate } = useFetchBlock()
+
+  const { data: ethereumPrice, isLoading: ethereumPriceIsLoading } = useFetchEthereumPrice()
 
   useEffect(() => {
     if (blocks.length || blockIsLoading) return
@@ -61,7 +64,15 @@ export default function Home() {
         />
       </form>
       <div className='mt-10'>
-        <div className='text-lg font-bold'>Blockchain Ethereum</div>
+        <div className='text-lg font-bold flex justify-center items-center'>
+          Blockchain Ethereum{' '}
+          {ethereumPriceIsLoading ? (
+            <Skeleton variant='text' sx={{ fontSize: '1rem', width: '5rem', marginLeft: '10px' }} />
+          ) : (
+            `- $${ethereumPrice}`
+          )}
+        </div>
+
         <div className='flex my-10'>
           {blockIsLoading ? (
             <Dots dotscolor='blue' />
