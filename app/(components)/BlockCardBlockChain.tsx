@@ -10,7 +10,7 @@ export default function BlockCardBlockChain({ block }: BlockCardProps) {
   const router = useRouter()
   if (!block) return null
   return (
-    <div className='py-4 px-2 mx-3 bg-white border border-gray-200 rounded-lg shadow hover:scale-110'>
+    <div className='py-4 px-2 mx-2 bg-white border border-gray-200 rounded-lg shadow hover:scale-110 my-2'>
       <h5 className='mb-2 font-bold tracking-tight text-gray-900'>Block n°{block?.number}</h5>
       <p className='mb-2 text-sm'>
         <b>Date : </b>

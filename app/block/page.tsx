@@ -4,23 +4,7 @@ import BlockCard from '@/components/BlockCard'
 import { BlockWithTransactions } from 'alchemy-sdk'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
-import styled from 'styled-components'
 import Dots from '../(components)/ui/Dots'
-
-const StyledBackUp = styled.div`
-  position: fixed;
-  top: 10rem;
-  left: 5rem;
-  background-color: grey;
-  padding: 5px;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
-
-  &:hover {
-    background-color: black;
-  }
-`
 
 export default function BlockPage() {
   const params = useSearchParams()
@@ -55,34 +39,25 @@ export default function BlockPage() {
   }
 
   return (
-    <>
-      <div className='flex flex-col items-center py-4'>
-        <form onSubmit={handleSubmit}>
-          <input
-            type='number'
-            value={blockInput}
-            onChange={(e) => setBlockInput(Number(e.target.value))}
-            className='p-4 border'
-            placeholder='Enter a block number'
-          />
-        </form>
-        <span className='font-bold text-xl my-5'>OR</span>
-        <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          onClick={randomNumberInTotalBlocks}
-          disabled={blockIsLoading}
-        >
-          {blockIsLoading ? <Dots dotscolor='white' /> : 'Generate a random number'}
-        </button>
-        <BlockCard block={block as BlockWithTransactions} blockIsLoading={blockIsLoading} />
-      </div>
-      <StyledBackUp
-        onClick={() => {
-          window.scrollTo(0, 0)
-        }}
+    <div className='flex flex-col items-center py-4'>
+      <form onSubmit={handleSubmit}>
+        <input
+          type='number'
+          value={blockInput}
+          onChange={(e) => setBlockInput(Number(e.target.value))}
+          className='p-4 border'
+          placeholder='Enter a block number'
+        />
+      </form>
+      <span className='font-bold text-xl my-5'>OR</span>
+      <button
+        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+        onClick={randomNumberInTotalBlocks}
+        disabled={blockIsLoading}
       >
-        Back up
-      </StyledBackUp>
-    </>
+        {blockIsLoading ? <Dots dotscolor='white' /> : 'Generate a random number'}
+      </button>
+      <BlockCard block={block as BlockWithTransactions} blockIsLoading={blockIsLoading} />
+    </div>
   )
 }

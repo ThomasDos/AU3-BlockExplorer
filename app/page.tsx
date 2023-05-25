@@ -73,7 +73,7 @@ export default function Home() {
           )}
         </div>
 
-        <div className='flex my-10'>
+        <div className='flex flex-wrap justify-center my-10'>
           {blockIsLoading ? (
             <Dots dotscolor='blue' />
           ) : (
